@@ -1,4 +1,8 @@
 package com.example.fit_tracker.service;
 
-public class StatsService {
+import com.example.fit_tracker.dto.StatsDTO;
+
+public interface StatsService {
+
+    StatsDTO getStats();
 }
