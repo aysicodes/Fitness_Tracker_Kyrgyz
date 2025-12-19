@@ -1,18 +1,29 @@
 package com.example.fit_tracker.service;
 
+import com.example.fit_tracker.dto.ActivityByDayDTO;
 import com.example.fit_tracker.dto.StatsDTO;
 import com.example.fit_tracker.repository.ActivityRepository;
 import com.example.fit_tracker.repository.GoalRepository;
 import com.example.fit_tracker.repository.WorkoutRepository;
 import com.example.fit_tracker.security.UserDetailsImpl;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+// НОВЫЙ ИМПОРТ: для корректного маппинга даты из PostgreSQL
 
 @Service
 @RequiredArgsConstructor
@@ -23,9 +34,8 @@ public class StatsServiceImpl implements StatsService {
     private final WorkoutRepository workoutRepository;
 
     public StatsDTO getStats() {
-        // 1. Получаем ID текущего пользователя
+        // ... (метод getStats остается без изменений)
         Long userId = getCurrentUserId();
-
         // 2. Goals
         Long achievedGoals = goalRepository.countByUserIdAndAchievedTrue(userId);
         Long notAchievedGoals = goalRepository.countByUserIdAndAchievedFalse(userId);
@@ -81,5 +91,78 @@ public class StatsServiceImpl implements StatsService {
             return ((UserDetailsImpl) authentication.getPrincipal()).getId();
         }
         throw new RuntimeException("User not authenticated or user ID not found.");
+    }
+
+
+    @Override
+    public List<ActivityByDayDTO> getDailyActivityLast30Days() {
+        Long userId = getCurrentUserId();
+
+        // 1. Расчет диапазона дат
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(29);
+        Date date30DaysAgo = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        // 2. Получение данных
+        List<Object[]> activityData = activityRepository.getDailyActivitySinceDate(userId, date30DaysAgo);
+        List<Object[]> workoutCaloriesData = workoutRepository.getDailyCaloriesSinceDate(userId, date30DaysAgo);
+
+        // 3. Объединение Activity и Workout данных в Map
+        Map<LocalDate, ActivityByDayDTO> dailyStatsMap = Stream.concat(
+                // Обработка Activity
+                activityData.stream().map(arr -> {
+                    // ИСПРАВЛЕНИЕ ДАТЫ: Используем java.sql.Date для преобразования
+                    LocalDate date = ((java.sql.Date) arr[0]).toLocalDate();
+                    ActivityByDayDTO dto = new ActivityByDayDTO();
+                    dto.setDate(date);
+
+                    // Упрощенное приведение (COALESCE гарантирует Number)
+                    dto.setSteps(((Number) arr[1]).intValue());
+                    dto.setDistance(((Number) arr[2]).doubleValue());
+                    dto.setCaloriesBurned(((Number) arr[3]).intValue());
+
+                    return dto;
+                }),
+                // Обработка Workout Calories
+                workoutCaloriesData.stream().map(arr -> {
+                    // ИСПРАВЛЕНИЕ ДАТЫ: Используем java.sql.Date для преобразования
+                    LocalDate date = ((java.sql.Date) arr[0]).toLocalDate();
+                    ActivityByDayDTO dto = new ActivityByDayDTO();
+                    dto.setDate(date);
+
+                    // Упрощенное приведение
+                    dto.setCaloriesBurned(((Number) arr[1]).intValue());
+
+                    return dto;
+                })
+        ).collect(Collectors.toMap(
+                ActivityByDayDTO::getDate,
+                dto -> dto,
+                // Объединение: суммируем значения, если дата уже есть
+                (dto1, dto2) -> {
+                    dto1.setSteps(dto1.getSteps() + dto2.getSteps());
+                    dto1.setDistance(dto1.getDistance() + dto2.getDistance());
+                    dto1.setCaloriesBurned(dto1.getCaloriesBurned() + dto2.getCaloriesBurned());
+                    return dto1;
+                }
+        ));
+
+        // 4. Заполнение недостающих дней нулями (Java 8 fix)
+        List<LocalDate> dates = Stream.iterate(startDate, date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(startDate, endDate) + 1)
+                .collect(Collectors.toList());
+
+        for (LocalDate date : dates) {
+            dailyStatsMap.computeIfAbsent(date, d -> {
+                ActivityByDayDTO dto = new ActivityByDayDTO();
+                dto.setDate(d);
+                return dto;
+            });
+        }
+
+        // 5. Сортировка и возврат
+        return dailyStatsMap.values().stream()
+                .sorted(Comparator.comparing(ActivityByDayDTO::getDate))
+                .collect(Collectors.toList());
     }
 }

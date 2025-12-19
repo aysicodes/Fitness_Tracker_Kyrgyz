@@ -3,9 +3,11 @@ package com.example.fit_tracker.config;
 import com.example.fit_tracker.security.AuthEntryPointJwt;
 import com.example.fit_tracker.security.AuthTokenFilter;
 import com.example.fit_tracker.security.UserDetailsServiceImpl;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -17,6 +19,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true) // Разрешает @PreAuthorize
@@ -57,13 +64,34 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // Разрешаем запросы с порта вашего фронтенда (Vite)
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5174", "http://127.0.0.1:5174"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Применяем ко всем URL
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
+                // 1. Включаем настроенный CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/auth/**").permitAll() // Разрешить регистрацию/логин
                                 .requestMatchers("/api/test/**").permitAll() // Пример публичного эндпоинта
+
+                                // 2. КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Разрешаем OPTIONS запросы без аутентификации
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                                 .anyRequest().authenticated() // Все остальные эндпоинты требуют аутентификации
                 );
 

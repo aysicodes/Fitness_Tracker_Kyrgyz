@@ -23,4 +23,8 @@ public class StatsController {
 
         return ResponseEntity.ok(statsService.getStats());
     }
+    @GetMapping("/stats/daily-activity")
+    public ResponseEntity<?> getDailyActivityLast30Days() {
+        return ResponseEntity.ok(statsService.getDailyActivityLast30Days());
+    }
 }

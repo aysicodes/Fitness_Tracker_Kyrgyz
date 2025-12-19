@@ -43,4 +43,10 @@ public interface ActivityRepository extends JpaRepository<Activity,Long> {
 
     List<Activity> findAllByUser(User user);
 
+    @Query("SELECT DATE(a.date), COALESCE(SUM(a.steps), 0), COALESCE(SUM(a.distance), 0.0), COALESCE(SUM(a.caloriesBurned), 0) " +
+            "FROM Activity a " +
+            "WHERE a.user.id = :userId AND a.date >= :startDate " +
+            "GROUP BY DATE(a.date) " +
+            "ORDER BY DATE(a.date) ASC")
+    List<Object[]> getDailyActivitySinceDate(@Param("userId") Long userId, @Param("startDate") Date startDate);
 }

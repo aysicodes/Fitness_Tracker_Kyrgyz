@@ -31,4 +31,17 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
     @Query("SELECT SUM(w.caloriesBurned) FROM Workout w WHERE w.user.id = :userId AND w.date >= :startDate")
     Integer getCaloriesBurnedSinceDate(@Param("userId") Long userId, @Param("startDate") Date startDate);
     List<Workout> findAllByUser(User user);
+
+    @Query("SELECT w FROM Workout w WHERE w.user = :user AND w.date >= :startOfDay AND w.date < :endOfDay ORDER BY w.date ASC")
+    List<Workout> findWorkoutsByDateRange(
+            @Param("user") User user,
+            @Param("startOfDay") Date startOfDay,
+            @Param("endOfDay") Date endOfDay);
+
+    @Query("SELECT DATE(w.date), COALESCE(SUM(w.caloriesBurned), 0) " +
+            "FROM Workout w " +
+            "WHERE w.user.id = :userId AND w.date >= :startDate " +
+            "GROUP BY DATE(w.date) " +
+            "ORDER BY DATE(w.date) ASC")
+    List<Object[]> getDailyCaloriesSinceDate(@Param("userId") Long userId, @Param("startDate") Date startDate);
 }

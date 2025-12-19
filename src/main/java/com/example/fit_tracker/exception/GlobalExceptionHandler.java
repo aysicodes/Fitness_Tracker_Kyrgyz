@@ -1,36 +1,3 @@
-//package com.example.fit_tracker.exception;
-//
-//import jakarta.persistence.EntityNotFoundException;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.ExceptionHandler;
-//import org.springframework.web.bind.annotation.ControllerAdvice;
-//
-//@ControllerAdvice
-//public class GlobalExceptionHandler {
-//
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<Object> handleException(Exception ex) {
-//        ErrorDetails errorDetails = new ErrorDetails("INTERNAL_SERVER_ERROR", ex.getMessage());
-//        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-//
-//    @ExceptionHandler(EntityNotFoundException.class)
-//    public ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex) {
-//        ErrorDetails errorDetails = new ErrorDetails("NOT_FOUND", ex.getMessage());
-//        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
-//    }
-//
-//    @ExceptionHandler(IllegalArgumentException.class)
-//    public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException ex) {
-//        ErrorDetails errorDetails = new ErrorDetails("BAD_REQUEST", ex.getMessage());
-//        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-//    }
-//
-//}
-
-
-
 
 package com.example.fit_tracker.exception;
 
@@ -45,9 +12,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 
 import javax.naming.AuthenticationException;
-import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -105,17 +72,18 @@ public class GlobalExceptionHandler {
     // --- 400 VALIDATION ERRORS (MethodArgumentNotValidException) ---
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationErrors(MethodArgumentNotValidException ex) {
-        // 1. Извлекаем уже локализованные сообщения об ошибках
-        List<String> errors = ex.getBindingResult().getFieldErrors().stream()
-                .map(error -> error.getDefaultMessage())
-                .collect(Collectors.toList());
 
-        // 2. Создаем структуру ответа для валидации (Map)
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("errorCode", "VALIDATION_FAILED");
-        errorResponse.put("errors", errors);
+        Map<String, String> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
+                .collect(Collectors.toMap(
+                        err -> err.getField(),
+                        err -> err.getDefaultMessage()
+                ));
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        Map<String, Object> body = new HashMap<>();
+        body.put("errorCode", "VALIDATION_FAILED");
+        body.put("errors", fieldErrors);
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     // --- 403 FORBIDDEN (Access Denied / Spring Security) ---
