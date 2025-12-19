@@ -67,17 +67,23 @@ public class WebSecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Разрешаем запросы с порта вашего фронтенда (Vite)
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5174", "http://127.0.0.1:5174"));
+        // Разрешаем и локальную разработку, и твой фронтенд на Vercel
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5174",
+                "http://127.0.0.1:5174",
+                "https://fittrackerkyrgyz.vercel.app",
+                "https://fittrackerkyrgyz-git-main-aizirek-s-projects.vercel.app"
+        ));
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        // Используем разрешенные заголовки, чтобы JWT токен мог проходить
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Применяем ко всем URL
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
