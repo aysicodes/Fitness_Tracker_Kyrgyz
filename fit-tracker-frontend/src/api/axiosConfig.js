@@ -1,8 +1,11 @@
 import axios from 'axios';
-// 💡 Импорт  i18n
-import i18n from '../i18n';
+import i18n from '../i18n'; // Убедись, что путь к i18n верный
 
-const API_URL = 'http://localhost:3030/api';
+// Динамический URL:
+// 1. Ищет переменную окружения в Vercel (VITE_API_URL)
+// 2. Если её нет, использует твой бэкенд на Render
+// 3. Если и его нет (например, нет интернета), использует localhost
+const API_URL = import.meta.env.VITE_API_URL || 'https://fitness-tracker-kyrgyz.onrender.com/api';
 
 const api = axios.create({
     baseURL: API_URL,
@@ -11,14 +14,15 @@ const api = axios.create({
     },
 });
 
+// Интерцептор для добавления токена и языка к каждому запросу
 api.interceptors.request.use(config => {
-    // 1. Добавляем токен
+    // 1. Добавляем токен из localStorage
     const token = localStorage.getItem('token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // 2. Добавляем локаль, управляемую i18next
+    // 2. Добавляем текущий язык для бэкенда
     config.headers['Accept-Language'] = i18n.language;
 
     return config;
@@ -27,27 +31,31 @@ api.interceptors.request.use(config => {
 });
 
 export const AuthService = {
-    // Вызов /api/auth/signin
+    // Авторизация
     login: async (username, password) => {
-        // Используем настроенный 'api' с интерсепторами
-        const response = await api.post('/auth/signin', { username, password });
-        const token = response.data.token;
-        if (token) {
-            localStorage.setItem('token', token);
+        try {
+            const response = await api.post('/auth/signin', { username, password });
+            const token = response.data.token;
+            if (token) {
+                localStorage.setItem('token', token);
+            }
+            return token;
+        } catch (error) {
+            console.error("Login error:", error.response?.data || error.message);
+            throw error;
         }
-        return token;
     },
 
+    // Выход
     logout: () => {
         localStorage.removeItem('token');
-        // i18next сам управляет своим хранилищем языка
     },
 
+    // Проверка, залогинен ли пользователь
     isAuthenticated: () => {
-        return !!localStorage.getItem('token');
-    },
-
-    // 🛑 Удалены getLocale/setLocale, т.к. язык управляется i18next.
+        const token = localStorage.getItem('token');
+        return !!token;
+    }
 };
 
-export default api; // Экспортируем настроенный axios instance
+export default api;
