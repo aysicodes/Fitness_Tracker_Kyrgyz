@@ -69,15 +69,19 @@ public class WebSecurityConfig {
 
         // Разрешаем и локальную разработку, и твой фронтенд на Vercel
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5174",
-                "http://127.0.0.1:5174",
-                "https://fittrackerkyrgyz.vercel.app",
-                "https://fittrackerkyrgyz-git-main-aizirek-s-projects.vercel.app"
+//                "http://localhost:5174",
+//                "http://127.0.0.1:5174",
+//                "https://fittrackerkyrgyz.vercel.app",
+//                "https://fittrackerkyrgyz-git-main-aizirek-s-projects.vercel.app"
+                "http://localhost:517*",
+                "http://127.0.0.1:517*",
+                "https://*.vercel.app",
+                "https://fittrackerkyrgyz.vercel.app"
         ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         // Используем разрешенные заголовки, чтобы JWT токен мог проходить
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Accept-Language"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -93,6 +97,7 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/auth/**").permitAll() // Разрешить регистрацию/логин
+                                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers("/api/test/**").permitAll() // Пример публичного эндпоинта
 
                                 // 2. КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Разрешаем OPTIONS запросы без аутентификации
