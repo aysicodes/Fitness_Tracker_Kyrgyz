@@ -1,9 +1,9 @@
 package com.example.fit_tracker.config;
 
+
 import com.example.fit_tracker.security.AuthEntryPointJwt;
 import com.example.fit_tracker.security.AuthTokenFilter;
 import com.example.fit_tracker.security.UserDetailsServiceImpl;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
