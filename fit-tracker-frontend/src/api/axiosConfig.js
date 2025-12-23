@@ -9,11 +9,11 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://fitness-tracker-kyrgyz.
 
 const api = axios.create({
     baseURL: API_URL,
+    timeout: 60000, // Увеличиваем до 60 секунд для холодного старта Render
     headers: {
         'Content-Type': 'application/json',
     },
 });
-
 // Интерцептор для добавления токена и языка к каждому запросу
 api.interceptors.request.use(config => {
     // 1. Добавляем токен из localStorage
