@@ -57,7 +57,10 @@
     "enter_login": "Логиниңизди киргизиңиз",
     "enter_password": "Сырсөзүңүздү киргизиңиз",
     "custom_workout": "Аталышын киргизиңиз",
-    "enter_email": "Имейлиңизди киргизиңиз"
+    "enter_email": "Имейлиңизди киргизиңиз",
+    "no_account_prompt": "Аккаунтуңуз жокбу?",
+    "register_link_text": "Каттоо",
+    "already_registered_prompt": "Катталгансызбы?"
   },
   "validation": {
     "login_required": "Логин жана сырсөздү киргизиңиз.",

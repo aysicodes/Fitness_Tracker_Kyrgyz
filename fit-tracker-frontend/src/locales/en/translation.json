@@ -57,7 +57,10 @@
     "enter_login": "Enter your username",
     "enter_password": "Enter your password",
     "custom_workout": "Enter title",
-    "enter_email": "Enter your email"
+    "enter_email": "Enter your email",
+    "no_account_prompt": "You don't have account?",
+    "register_link_text": "Sign up",
+    "already_registered_prompt": "Already signed up?"
   },
   "validation": {
     "login_required": "Please enter a username and password.",

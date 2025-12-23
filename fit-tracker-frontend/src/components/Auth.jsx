@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
-
+import { Link } from 'react-router-dom'; // Добавили Link
+import LanguageSwitcher from './LanguageSwitcher';
 const Auth = () => {
     //hook t
     const { t } = useTranslation();
@@ -30,7 +31,7 @@ const Auth = () => {
 
     return (
         <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
-
+            <LanguageSwitcher />
             <h2>{t('login_heading')}</h2>
             <form onSubmit={handleSubmit}>
                 <div style={{ marginBottom: '15px' }}>
@@ -63,6 +64,13 @@ const Auth = () => {
 
                 <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px' }}>{t('login_button')}</button>
             </form>
+
+            <p style={{ textAlign: 'center', marginTop: '20px' }}>
+                {t('no_account_prompt') || "Don't have an account?"}{' '}
+                <Link to="/register" style={{ color: '#007bff', fontWeight: 'bold' }}>
+                    {t('register_link_text') || "Sign Up"}
+                </Link>
+            </p>
         </div>
     );
 };

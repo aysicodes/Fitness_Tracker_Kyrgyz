@@ -57,7 +57,10 @@
     "enter_login": "Введите логин",
     "enter_password": "Введите пароль",
     "custom_workout": "Введите название",
-    "enter_email": "Введите имейл"
+    "enter_email": "Введите имейл",
+    "no_account_prompt": "У вас нет аккаунта?",
+    "register_link_text": "Зарегистрироваться",
+    "already_registered_prompt": "Уже зарегистрированы?"
   },
   "validation": {
     "login_required": "Пожалуйста, введите логин и пароль.",
