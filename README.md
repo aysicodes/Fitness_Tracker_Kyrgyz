@@ -2,6 +2,7 @@
 
 [![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://fittrackerkyrgyz.vercel.app)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot)](https://fitness-tracker-kyrgyz.onrender.com)
+[![Swagger UI](https://img.shields.io/badge/Swagger_UI-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](https://fitness-tracker-kyrgyz.onrender.com/swagger-ui/index.html)
 
 **Ala-Too Fit** is a professional **Full-Stack Fitness Management System** inspired by the excellence of **Ala-Too International University**. This platform provides a localized, data-driven experience for users to track workouts, set goals, and monitor health metrics.
 
@@ -72,9 +73,3 @@
 * **Preflight Requests:** Configured Spring Security to permit all **OPTIONS** requests globally.
 
 ---
-
-## 👩‍💻 About the Developer
-Developed by **Aizirek** as a graduation project. 
-**Institution:** Ala-Too International University (AIU).
-
-Swagger link: https://fitness-tracker-kyrgyz.onrender.com/swagger-ui/index.html
