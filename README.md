@@ -1,48 +1,60 @@
 # 🏔️ Ala-Too Fit
 
-Ala-Too Fit is a comprehensive health and activity tracking web application inspired by the spirit of Ala-Too International University. It is designed to empower students and fitness enthusiasts in Kyrgyzstan to monitor their physical progress, set ambitious goals, and maintain a healthy lifestyle through a modern, localized interface.
+[![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://fittrackerkyrgyz.vercel.app)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot)](https://fitness-tracker-kyrgyz.onrender.com)
 
-Key Features
-Multilingual Support: Fully localized in Kyrgyz, Russian, and English to ensure accessibility for the entire university community.
+**Ala-Too Fit** is a professional **full-stack** health platform inspired by **Ala-Too International University**. It is designed to help users track their fitness journey with a focus on localization for **Kyrgyzstan**.
 
-Secure Authentication: Robust User Sign-up and Sign-in system using JWT (JSON Web Tokens) for data security.
+---
 
-Activity Dashboard: Interactive charts visualizing "Daily Activity" including steps and calories burned over the last 30 days.
+## 📸 Project Showroom
 
-Personalized Profile: Users can manage their fitness metrics such as Height, Weight, and Age to get more accurate data.
+| **Authentication & Localization** | **Personal Activity Dashboard** |
+|:---:|:---:|
+| ![Login Page](./screenshots/auth.png) | ![Dashboard](./screenshots/dashboard_dark.png) |
+| *Supports **KY, RU, and EN** languages* | *Real-time **charts** & **Dark Mode*** |
 
-Goal Management: Create, track, and complete fitness milestones (e.g., "Run 100km this month").
+---
 
-Workout Logger: Easy-to-use forms to log predefined activities like Running, Cycling, and Weightlifting, or add custom workout types.
+## 🌟 Core Features
 
-Adaptive Theme: Seamlessly switch between Dark Mode and Light Mode for the best user experience.
+* **Multilingual Interface:** Full support for **Kyrgyz**, **Russian**, and **English**.
+* **Visual Analytics:** Interactive **charts** for monitoring **Calories** and **Steps**.
+* **Health Profiles:** Securely manage **Weight**, **Height**, and **Age** metrics.
+* **Workout Logging:** Flexible system for **Running**, **Cycling**, or **Custom** exercises.
+* **Goal Setting:** Track personal **Milestones** and fitness achievements.
 
-Tech Stack
-Frontend
+---
 
-React.js (Vite) – Fast, component-based UI development.
+## 🛠️ Technical Architecture
 
-i18next – Framework for professional translation and localization.
+### **Frontend (Client)**
+* **React.js (Vite):** Powering the fast, responsive **UI**.
+* **i18next:** Handling complex **Localization** and language switching.
+* **Chart.js:** Rendering dynamic **Data Visualizations**.
+* **Axios:** Managing **REST API** communication.
 
-Chart.js – Used for dynamic data visualization.
+### **Backend (Server)**
+* **Spring Boot:** Core **Java** framework for business logic.
+* **Spring Security:** Implementation of **JWT** and **CORS** protocols.
+* **PostgreSQL:** Reliable **Database** for user data persistence.
 
-Axios – Handling API communications with the backend.
+---
 
-Context API – Global state management for Authentication and Theme switching.
+## 🔧 Challenges & Solutions
 
-Backend
+During development, I encountered a critical **CORS 403 Forbidden** error when connecting the Vercel frontend to the Render backend. 
 
-Java Spring Boot – Scalable and high-performance server-side logic.
+**The Solution:**
+* Configured a custom `CorsConfigurationSource` in **Spring Security**.
+* Specifically allowed **Origin Patterns** for `*.vercel.app`.
+* Added `Accept-Language` to **Allowed Headers** to support the localization feature.
+* Handled the **OPTIONS** preflight requests by placing them at the top of the **Security Filter Chain**.
 
-Spring Security – Implementation of secure access controls.
+---
 
-PostgreSQL – Reliable relational database for storing user health data.
-
-Render – Cloud hosting for the live API.
-
-🚀 Live Demo
-Website: https://fittrackerkyrgyz.vercel.app
-
-API Endpoint: https://fitness-tracker-kyrgyz.onrender.com
+## 👩‍💻 About the Developer
+Developed by **Aizirek** as a capstone project. 
+**Institution:** Ala-Too International University (AIU).
 
 Swagger link: https://fitness-tracker-kyrgyz.onrender.com/swagger-ui/index.html
