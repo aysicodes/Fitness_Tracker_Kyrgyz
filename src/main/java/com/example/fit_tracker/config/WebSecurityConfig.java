@@ -26,7 +26,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @Configuration
-@EnableMethodSecurity(prePostEnabled = true) // Разрешает @PreAuthorize
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
@@ -76,7 +76,7 @@ public class WebSecurityConfig {
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // ВАЖНО: Разрешаем ВСЕ заголовки, чтобы не гадать, какой блокирует
+        // Разрешаем ВСЕ заголовки
         configuration.setAllowedHeaders(Arrays.asList("*"));
 
         configuration.setAllowCredentials(true);
@@ -90,7 +90,7 @@ public class WebSecurityConfig {
 //    CorsConfigurationSource corsConfigurationSource() {
 //        CorsConfiguration configuration = new CorsConfiguration();
 //
-//        // Разрешаем и локальную разработку, и твой фронтенд на Vercel
+//        // Разрешаем и локальную разработку и фронтенд на Vercel
 //        configuration.setAllowedOrigins(Arrays.asList(
 ////                "http://localhost:5174",
 ////                "http://127.0.0.1:5174",
@@ -138,15 +138,15 @@ public class WebSecurityConfig {
 @Bean
 public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
-            // 1. Сначала ВСЕГДА включаем CORS и отключаем CSRF
+            // ВСЕГДА включаем CORS и отключаем CSRF
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
 
-            // 2. Настраиваем обработку ошибок и сессии
+            // Настраиваем обработку ошибок и сессии
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            // 3. Правила доступа
+            // Правила доступа
             .authorizeHttpRequests(auth -> auth
                     // Самое важное для браузеров: разрешаем OPTIONS для всего
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -157,7 +157,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                     .anyRequest().authenticated()
             );
 
-    // 4. Провайдеры и фильтры
+    // Провайдеры и фильтры
     http.authenticationProvider(authenticationProvider());
     http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
