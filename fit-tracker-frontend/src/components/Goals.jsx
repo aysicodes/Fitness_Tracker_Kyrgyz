@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GoalService } from '../api/GoalService';
-import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { getGlobalStyles } from '../styles/AppStyles';
-import { FaPlus, FaCheckCircle, FaTrash, FaCalendarAlt, FaBullseye, FaArrowLeft, FaEdit } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaCalendarAlt, FaBullseye, FaEdit, FaCheck } from 'react-icons/fa';
 
 const Goals = () => {
     const { t, i18n } = useTranslation();
@@ -28,103 +27,97 @@ const Goals = () => {
 
     useEffect(() => { fetchGoals(); }, []);
 
-    const handleEdit = (goal) => {
-        setEditingGoal(goal);
-        setFormData({
-            description: goal.description,
-            startDate: goal.startDate ? new Date(goal.startDate).toISOString().split('T')[0] : '',
-            endDate: goal.endDate ? new Date(goal.endDate).toISOString().split('T')[0] : '',
-            targetSteps: String(goal.targetSteps || ''),
-            targetDistance: String(goal.targetDistance || ''),
-        });
-        setIsFormVisible(true);
-    };
-
-    const handleCancel = () => {
-        setIsFormVisible(false);
-        setEditingGoal(null);
-        setFormData({ description: '', startDate: '', endDate: '', targetSteps: '', targetDistance: '' });
-    };
-
     const handleSave = async (e) => {
         e.preventDefault();
-        const payload = {
-            ...formData,
-            targetSteps: formData.targetSteps ? parseInt(formData.targetSteps) : null,
-            targetDistance: formData.targetDistance ? parseFloat(formData.targetDistance) : null,
-        };
-
         try {
             if (editingGoal) {
-                await GoalService.updateGoal(editingGoal.id, { ...payload, achieved: editingGoal.achieved });
+                await GoalService.updateGoal(editingGoal.id, { ...formData, achieved: editingGoal.achieved });
             } else {
-                await GoalService.postGoal(payload);
+                await GoalService.postGoal(formData);
             }
             fetchGoals();
-            handleCancel();
+            setIsFormVisible(false);
+            setEditingGoal(null);
         } catch (err) { console.error(err); }
     };
 
-    if (loading) return <p style={{ textAlign: 'center', color: colors.textMain, marginTop: '50px' }}>{t('loading')}</p>;
-
     return (
-        <div style={{ backgroundColor: colors.background, minHeight: '100vh', padding: '30px', transition: 'all 0.3s ease' }}>
-            <div style={{ maxWidth: '1200px', margin: 'auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-                    <h1 style={{ color: colors.primary, display: 'flex', alignItems: 'center', margin: 0 }}>
-                        <FaBullseye style={{ marginRight: '15px' }} /> {t('goals_heading')}
-                    </h1>
-                    <Link to="/dashboard" style={{ textDecoration: 'none' }}>
-                        <button style={global.button(colors.primary)}><FaArrowLeft style={{marginRight: '8px'}}/> {t('dashboard_heading')}</button>
-                    </Link>
-                </div>
+        <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
 
-                <button
-                    onClick={() => isFormVisible ? handleCancel() : setIsFormVisible(true)}
-                    style={{ ...global.button(isFormVisible ? colors.accent : colors.success), marginBottom: '30px' }}
-                >
-                    <FaPlus style={{ marginRight: '8px' }} />
-                    {isFormVisible ? t('hide_form_button') : t('add_new_goal_button')}
-                </button>
+            <aside style={{ width: '280px', backgroundColor: '#fff', borderRight: '1px solid #eee', padding: '40px 20px' }}>
+                <div style={{ marginBottom: '40px', textAlign: 'center' }}>
+                    <img src="/logo.png" alt="Ala-Too Fit" style={{ width: '120px' }} />
+                </div>
+                <nav>
+                    <button
+                        onClick={() => setIsFormVisible(!isFormVisible)}
+                        style={{ ...global.button('#5e72e4'), width: '100%', justifyContent: 'center', marginBottom: '20px' }}
+                    >
+                        <FaPlus style={{ marginRight: '10px' }} /> {t('add_goal_button')}
+                    </button>
+                    <div style={{ color: '#8898aa', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', paddingLeft: '10px' }}>
+                        {t('statistics')}
+                    </div>
+                </nav>
+            </aside>
+
+            {/* Main Content Area */}
+            <main style={{ flex: 1, padding: '40px' }}>
+                <header style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px' }}>
+                    <h1 style={{ fontSize: '24px', color: '#32325d', fontWeight: '700' }}>{t('goals_heading')}</h1>
+                </header>
 
                 {isFormVisible && (
-                    <div style={{ ...global.card, marginBottom: '30px' }}>
-                        <h3 style={{ color: colors.primary, marginTop: 0 }}>{editingGoal ? t('edit_goal_heading') : t('add_new_goal')}</h3>
-                        <form onSubmit={handleSave}>
-                            <input type="text" placeholder={t('goal_description_placeholder')} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} style={{...global.input, color: colors.textMain, backgroundColor: colors.card}} required />
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <input type="date" value={formData.startDate} onChange={(e) => setFormData({...formData, startDate: e.target.value})} style={{...global.input, color: colors.textMain, backgroundColor: colors.card}} required />
-                                <input type="date" value={formData.endDate} onChange={(e) => setFormData({...formData, endDate: e.target.value})} style={{...global.input, color: colors.textMain, backgroundColor: colors.card}} required />
-                            </div>
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                                <button type="submit" style={global.button(colors.primary)}>{t('save_changes_button')}</button>
-                                <button type="button" onClick={handleCancel} style={global.button(colors.accent)}>{t('cancel_button')}</button>
+                    <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 0 2rem 0 rgba(136,152,170,.15)', marginBottom: '30px' }}>
+                        <form onSubmit={handleSave} style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
+                            <input type="text" placeholder={t('description')} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} style={{...global.input, flex: '1 1 100%'}} required />
+                            <input type="date" value={formData.startDate} onChange={(e) => setFormData({...formData, startDate: e.target.value})} style={{...global.input, flex: '1'}} required />
+                            <input type="date" value={formData.endDate} onChange={(e) => setFormData({...formData, endDate: e.target.value})} style={{...global.input, flex: '1'}} required />
+                            <div style={{ width: '100%', display: 'flex', gap: '10px' }}>
+                                <button type="submit" style={global.button('#5e72e4')}>{t('save')}</button>
+                                <button type="button" onClick={() => setIsFormVisible(false)} style={global.button('#f5365c')}>{t('cancel')}</button>
                             </div>
                         </form>
                     </div>
                 )}
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
-                    {goals.map(goal => (
-                        <div key={goal.id} style={{
-                            ...global.card,
-                            border: goal.achieved ? `2px solid ${colors.success}` : `1px solid ${colors.border}`,
-                            position: 'relative'
-                        }}>
-                            <h3 style={{ color: colors.textMain, marginTop: 0 }}>{goal.description}</h3>
-                            <p style={{ color: colors.textMuted }}><FaCalendarAlt /> {new Date(goal.startDate).toLocaleDateString(i18n.language)} - {new Date(goal.endDate).toLocaleDateString(i18n.language)}</p>
-
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                                {!goal.achieved && (
-                                    <button onClick={() => GoalService.updateStatus(goal.id).then(fetchGoals)} style={global.button(colors.success)}>{t('mark_achieved_button')}</button>
-                                )}
-                                <button onClick={() => handleEdit(goal)} style={global.button(colors.primary)}><FaEdit /></button>
-                                <button onClick={() => GoalService.deleteGoal(goal.id).then(fetchGoals)} style={global.button(colors.accent)}><FaTrash /></button>
-                            </div>
-                        </div>
-                    ))}
+                <div style={{ backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 0 2rem 0 rgba(136,152,170,.15)', overflow: 'hidden' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                        <thead style={{ backgroundColor: '#f6f9fc', color: '#8898aa', textTransform: 'uppercase', fontSize: '12px' }}>
+                        <tr>
+                            <th style={{ padding: '15px 25px' }}>{t('goal_description_placeholder')}</th>
+                            <th style={{ padding: '15px 25px' }}>{t('date_range_label')}</th>
+                            <th style={{ padding: '15px 25px' }}>{t('status')}</th>
+                            <th style={{ padding: '15px 25px' }}>{t('actions')}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {goals.map(goal => (
+                            <tr key={goal.id} style={{ borderTop: '1px solid #eee' }}>
+                                <td style={{ padding: '20px 25px', color: '#32325d', fontWeight: '600' }}>{goal.description}</td>
+                                <td style={{ padding: '20px 25px', color: '#525f7f' }}>
+                                    <FaCalendarAlt style={{ marginRight: '8px', color: '#adb5bd' }} />
+                                    {new Date(goal.startDate).toLocaleDateString()} - {new Date(goal.endDate).toLocaleDateString()}
+                                </td>
+                                <td style={{ padding: '20px 25px' }}>
+                                        <span style={{
+                                            padding: '5px 10px', borderRadius: '20px', fontSize: '12px',
+                                            backgroundColor: goal.achieved ? '#e2f9ed' : '#fef1f2',
+                                            color: goal.achieved ? '#2dce89' : '#f5365c'
+                                        }}>
+                                            {goal.achieved ? t('status_achieved') : t('status_in_progress')}
+                                        </span>
+                                </td>
+                                <td style={{ padding: '20px 25px', display: 'flex', gap: '10px' }}>
+                                    {!goal.achieved && <button onClick={() => GoalService.updateStatus(goal.id).then(fetchGoals)} style={{ border: 'none', background: 'none', color: '#2dce89' }}><FaCheck /></button>}
+                                    <button onClick={() => GoalService.deleteGoal(goal.id).then(fetchGoals)} style={{ border: 'none', background: 'none', color: '#f5365c' }}><FaTrash /></button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+            </main>
         </div>
     );
 };

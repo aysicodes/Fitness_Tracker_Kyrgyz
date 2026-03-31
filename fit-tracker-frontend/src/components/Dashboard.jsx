@@ -1,57 +1,64 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { getGlobalStyles } from '../styles/AppStyles';
 import { StatsService } from '../api/StatsService';
 import WorkoutForm from './WorkoutForm';
-import LanguageSwitcher from './LanguageSwitcher';
 import ActivityChart from './ActivityChart';
-import ThemeToggle from './ThemeToggle';
+import AIChat from './AIChat';
 
-import { FaUser, FaSignOutAlt, FaBullseye, FaCalendarAlt, FaFire, FaRunning, FaClock, FaChartLine } from 'react-icons/fa';
+import {
+    FaFire, FaRunning, FaClock, FaRobot, FaTimes
+} from 'react-icons/fa';
 
-// statistics vidget
+/**
+ * Статистикалык виджет - Салмак, калория же убакытты кооз көрсөтүү үчүн
+ */
 const StatWidget = ({ titleKey, value, unitKey, icon: Icon, color }) => {
     const { t } = useTranslation();
     const { colors } = useTheme();
     const global = getGlobalStyles(colors);
 
-    const activeTextColor = colors.textMain || '#FFFFFF';
-
     return (
-        <div style={global.card}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                <h3 style={{ margin: 0, color: colors.textMuted, fontSize: '1em' }}>{t(titleKey)}</h3>
-                <Icon size={24} color={color} />
+        <div style={{ ...global.card, flex: 1, minWidth: '250px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                    <p style={{ margin: 0, color: colors.textMuted, fontSize: '0.9rem', fontWeight: '600', textTransform: 'uppercase' }}>
+                        {t(titleKey)}
+                    </p>
+                    <h2 style={{ fontSize: '2.2rem', margin: '10px 0', color: colors.textMain, fontWeight: '800' }}>
+                        {value ? value.toLocaleString() : 0}
+                        <span style={{ fontSize: '0.9rem', marginLeft: '5px', color: colors.textMuted, fontWeight: 'normal' }}>
+                            {unitKey ? t(unitKey) : ''}
+                        </span>
+                    </h2>
+                </div>
+                <div style={{
+                    backgroundColor: `${color}15`,
+                    padding: '12px',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <Icon size={24} color={color} />
+                </div>
             </div>
-            <p style={{
-                fontSize: '2.5em',
-                fontWeight: '900',
-                color: activeTextColor,
-                margin: '5px 0'
-            }}>
-                {value.toLocaleString()}
-                <span style={{ fontSize: '0.4em', fontWeight: 'normal', color: colors.textMuted, marginLeft: '5px' }}>
-                    {unitKey ? t(unitKey) : ''}
-                </span>
-            </p>
         </div>
     );
 };
 
 const Dashboard = () => {
     const { t, i18n } = useTranslation();
-    const { logout } = useAuth();
-    const { colors } = useTheme();
+    const { colors, isDarkMode } = useTheme();
     const global = getGlobalStyles(colors);
 
     const [stats, setStats] = useState(null);
     const [dailyActivity, setDailyActivity] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+    const [isAiOpen, setIsAiOpen] = useState(false);
 
+    // Маалыматтарды серверден алуу
     const fetchDashboardData = async () => {
         setLoading(true);
         try {
@@ -60,50 +67,106 @@ const Dashboard = () => {
             const dailyData = await StatsService.getDailyActivity();
             setDailyActivity(dailyData);
         } catch (err) {
-            setError(t('error.loading_failed'));
+            console.error("Dashboard Data Fetch Error:", err);
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => { fetchDashboardData(); }, [i18n.language]);
+    useEffect(() => {
+        fetchDashboardData();
+    }, [i18n.language]);
 
-    if (loading) return <p style={{ textAlign: 'center', color: colors.textMain, marginTop: '50px' }}>{t('loading')}</p>;
+    if (loading) return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh', color: colors.textMain }}>
+            {t('loading')}...
+        </div>
+    );
 
     return (
-        <div style={{ ...global.page, backgroundColor: colors.background, minHeight: '100vh', padding: '20px', color: colors.textMain }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1200px', margin: '0 auto 40px' }}>
-                <h1 style={{ color: colors.textMain, margin: 0 }}>{t('dashboard_heading')}</h1>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                    <ThemeToggle />
-                    <LanguageSwitcher />
-                    <button onClick={() => logout()} style={global.button(colors.accent)}>
-                        <FaSignOutAlt /> {t('logout_button')}
-                    </button>
-                </div>
+        <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto' }}>
 
+            {/* Башкы тема */}
+            <h1 style={{ color: colors.textMain, marginBottom: '35px', fontWeight: '900', fontSize: '2rem' }}>
+                {t('dashboard_heading')}
+            </h1>
+
+            {/* Статистика виджеттери - 3 катар */}
+            <div style={{ display: 'flex', gap: '20px', marginBottom: '35px', flexWrap: 'wrap' }}>
+                <StatWidget
+                    titleKey="calories_burned_widget"
+                    value={stats?.totalCaloriesBurned}
+                    unitKey="calories_unit"
+                    icon={FaFire}
+                    color="#FF4D4D"
+                />
+                <StatWidget
+                    titleKey="total_steps_widget"
+                    value={stats?.steps}
+                    unitKey="steps_key"
+                    icon={FaRunning}
+                    color={colors.primary}
+                />
+                <StatWidget
+                    titleKey="total_duration_widget"
+                    value={stats?.duration}
+                    unitKey="minutes_unit"
+                    icon={FaClock}
+                    color="#4DA6FF"
+                />
             </div>
 
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                <Link to="/goals" style={{ textDecoration: 'none' }}><button style={global.button(colors.primary)}><FaBullseye /> {t('goals_heading')}</button></Link>
-                <Link to="/activity" style={{ textDecoration: 'none' }}><button style={global.button(colors.primary)}><FaChartLine /> {t('activity_heading')}</button></Link>
-                <Link to="/workouts" style={{ textDecoration: 'none' }}><button style={global.button(colors.primary)}><FaCalendarAlt /> {t('workouts_page_heading')}</button></Link>
-                <Link to="/profile" style={{ textDecoration: 'none' }}><button style={global.button(colors.primary)}><FaUser /> {t('profile_heading')}</button></Link>
-            </div>
-
+            {/* Активдүүлүк графиги */}
             {dailyActivity.length > 0 && (
-                <div style={{ maxWidth: '1200px', margin: '0 auto 30px' }}>
+                <div style={{ ...global.card, marginBottom: '35px', padding: '25px' }}>
+                    <h3 style={{ marginTop: 0, marginBottom: '25px', color: colors.textMain, fontWeight: '700' }}>
+                        {t('activity_chart_title') || 'Прогресс'}
+                    </h3>
                     <ActivityChart data={dailyActivity} />
                 </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', maxWidth: '1200px', margin: 'auto' }}>
-                <StatWidget titleKey="calories_burned_widget" value={stats?.totalCaloriesBurned || 0} unitKey="calories_unit" icon={FaFire} color={colors.accent} />
-                <StatWidget titleKey="total_steps_widget" value={stats?.steps || 0} unitKey="steps_key" icon={FaRunning} color={colors.primary} />
-                <StatWidget titleKey="total_duration_widget" value={stats?.duration || 0} unitKey="minutes_unit" icon={FaClock} color={colors.primary} />
-                <div style={{ ...global.card, gridColumn: '1 / -1' }}>
-                    <WorkoutForm onWorkoutAdded={fetchDashboardData} />
-                </div>
+            {/* Жаңы машыгуу кошуу формасы */}
+            <div style={{ ...global.card, padding: '35px' }}>
+                <h3 style={{ marginTop: 0, marginBottom: '30px', color: colors.textMain, fontWeight: '700' }}>
+                    {t('new_workout_heading')}
+                </h3>
+                <WorkoutForm onWorkoutAdded={fetchDashboardData} />
+            </div>
+
+            {/* ИИ Чат (Floating Chat) */}
+            <div style={{ position: 'fixed', bottom: '30px', right: '30px', zIndex: 1000 }}>
+                {isAiOpen && (
+                    <div style={{
+                        marginBottom: '15px',
+                        width: '380px',
+                        height: '550px',
+                        boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+                        borderRadius: '24px',
+                        overflow: 'hidden',
+                        border: `1px solid ${colors.border}`,
+                        backgroundColor: colors.card,
+                        animation: 'fadeIn 0.3s ease'
+                    }}>
+                        <AIChat isDarkMode={isDarkMode} userStats={stats} />
+                    </div>
+                )}
+                <button
+                    onClick={() => setIsAiOpen(!isAiOpen)}
+                    style={{
+                        ...global.button(isAiOpen ? colors.accent : colors.primary),
+                        width: '65px',
+                        height: '65px',
+                        borderRadius: '50%',
+                        justifyContent: 'center',
+                        boxShadow: '0 8px 25px rgba(0,0,0,0.2)',
+                        transition: 'transform 0.2s ease',
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                >
+                    {isAiOpen ? <FaTimes size={25} /> : <FaRobot size={32} />}
+                </button>
             </div>
         </div>
     );

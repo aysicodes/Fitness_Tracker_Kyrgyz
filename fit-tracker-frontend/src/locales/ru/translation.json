@@ -155,16 +155,17 @@
   "period_label": "Период",
   "target": "Цель",
   "status_achieved": "Достигнуто",
-  "status_pending": "В процессе",
+  "status_in_progress": "В процессе",
   "mark_achieved_button": "Отметить как достигнутую",
   "add_goal_button": "Добавить цель",
-  "goal_description_placeholder": "Описание цели (напр., 'Пробежать 100 км за месяц')",
-  "start_date_label": "Дата начала",
-  "end_date_label": "Дата окончания",
+  "goal_description_placeholder": "Описание цели",
+  "date_range_label": "Диапазон",
   "target_steps_placeholder": "Целевое количество шагов",
   "target_distance_placeholder": "Целевое расстояние (км)",
   "target_steps_label": "Целевые шаги",
   "target_distance_label": "Целевое расстояние",
   "edit_goal_heading": "Редактировать цель",
-  "save_changes_button": "Сохранить изменения"
+  "save_changes_button": "Сохранить изменения",
+
+  "personal_data": "Личные данные"
 }

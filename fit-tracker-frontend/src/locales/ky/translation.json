@@ -150,21 +150,21 @@
   "no_workouts_on_date": "Бул датага машыгуулар табылган жок.",
   "locale": "ky",
 
-  "add_new_goal_button": "Жаңы максат",
   "your_goals_list": "Максаттардын тизмеси",
   "period_label": "Мөөнөт",
   "target": "Максат",
   "status_achieved": "Жетишилди",
-  "status_pending": "Процессте",
+  "status_in_progress": "Процессте",
   "mark_achieved_button": "Жетишилди деп белгилөө",
-  "add_goal_button": "Максат кошуу",
-  "goal_description_placeholder": "Максаттын сүрөттөмөсү (мисалы, 'Бул айда 100 км чуркоо')",
-  "start_date_label": "Баштоо датасы",
-  "end_date_label": "Аяктоо датасы",
+  "add_goal_button": "Жаңы максат кошуу",
+  "goal_description_placeholder": "Максаттын сүрөттөмөсү",
+  "date_range_label": "Аралыгы",
   "target_steps_placeholder": "Максаттуу кадамдар",
   "target_distance_placeholder": "Максаттуу аралык (км)",
   "target_steps_label": "Максаттуу кадамдар",
   "target_distance_label": "Максаттуу аралык",
   "edit_goal_heading": "Максатты өзгөртүү",
-  "save_changes_button": "Өзгөртүүлөрдү сактоо"
+  "save_changes_button": "Өзгөртүүлөрдү сактоо",
+
+  "personal_data": "Жеке маалымат"
 }

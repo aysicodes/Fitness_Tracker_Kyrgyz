@@ -1,6 +1,5 @@
 package com.example.fit_tracker.config;
 
-
 import com.example.fit_tracker.security.AuthEntryPointJwt;
 import com.example.fit_tracker.security.AuthTokenFilter;
 import com.example.fit_tracker.security.UserDetailsServiceImpl;
@@ -26,7 +25,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @Configuration
-@EnableMethodSecurity(prePostEnabled = true) // Разрешает @PreAuthorize
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
@@ -37,10 +36,8 @@ public class WebSecurityConfig {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
-
         return authProvider;
     }
 
@@ -66,101 +63,37 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        // Разрешаем ВСЕ поддомены vercel
-        configuration.setAllowedOriginPatterns(Arrays.asList(
-                "http://localhost:517*",
-                "https://*.vercel.app",
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+                "http://localhost:5174",
+                "http://127.0.0.1:5174",
                 "https://fittrackerkyrgyz.vercel.app"
         ));
-
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // ВАЖНО: Разрешаем ВСЕ заголовки, чтобы не гадать, какой блокирует
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Accept-Language"));
         configuration.setAllowCredentials(true);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
-//    @Bean
-//    CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//
-//        // Разрешаем и локальную разработку, и твой фронтенд на Vercel
-//        configuration.setAllowedOrigins(Arrays.asList(
-////                "http://localhost:5174",
-////                "http://127.0.0.1:5174",
-////                "https://fittrackerkyrgyz.vercel.app",
-////                "https://fittrackerkyrgyz-git-main-aizirek-s-projects.vercel.app"
-//                "http://localhost:517*",
-//                "http://127.0.0.1:517*",
-//                "https://*.vercel.app",
-//                "https://fittrackerkyrgyz.vercel.app"
-//        ));
-//
-//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//        // Используем разрешенные заголовки, чтобы JWT токен мог проходить
-//        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Accept-Language"));
-//        configuration.setAllowCredentials(true);
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.csrf(csrf -> csrf.disable())
-//                // 1. Включаем настроенный CORS
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeHttpRequests(auth ->
-//                        auth.requestMatchers("/api/auth/**").permitAll() // Разрешить регистрацию/логин
-//                                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-//                                .requestMatchers("/api/test/**").permitAll() // Пример публичного эндпоинта
-//
-//                                // 2. КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Разрешаем OPTIONS запросы без аутентификации
-//                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-//
-//                                .anyRequest().authenticated() // Все остальные эндпоинты требуют аутентификации
-//                );
-//
-//        http.authenticationProvider(authenticationProvider());
-//        http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//        return http.build();
-//    }
-
-@Bean
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http
-            // 1. Сначала ВСЕГДА включаем CORS и отключаем CSRF
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-
-            // 2. Настраиваем обработку ошибок и сессии
-            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-            // 3. Правила доступа
-            .authorizeHttpRequests(auth -> auth
-                    // Самое важное для браузеров: разрешаем OPTIONS для всего
-                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    // Разрешаем вход и регистрацию
-                    .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/api/test/**").permitAll()
-                    // Все остальное — под замок
-                    .anyRequest().authenticated()
-            );
-
-    // 4. Провайдеры и фильтры
-    http.authenticationProvider(authenticationProvider());
-    http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
-
-    return http.build();
-}
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/test/**").permitAll()
+                        .requestMatchers("/api/ai/**").permitAll()
+                        .anyRequest().authenticated()
+                );
+        http.authenticationProvider(authenticationProvider());
+        http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
 }

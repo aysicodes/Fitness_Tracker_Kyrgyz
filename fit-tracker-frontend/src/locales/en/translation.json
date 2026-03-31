@@ -154,16 +154,17 @@
   "period_label": "Period",
   "target": "Target",
   "status_achieved": "Achieved",
-  "status_pending": "Pending",
+  "status_in_progress": "Pending",
   "mark_achieved_button": "Mark as Achieved",
-  "add_goal_button": "Add Goal",
-  "goal_description_placeholder": "Goal description (e.g., 'Run 100km this month')",
-  "start_date_label": "Start Date",
-  "end_date_label": "End Date",
+  "add_goal_button": "Add New Goal",
+  "goal_description_placeholder": "Goal description",
+  "date_range_label": "Date Range",
   "target_steps_placeholder": "Target Steps",
   "target_distance_placeholder": "Target Distance (km)",
   "target_steps_label": "Target Steps",
   "target_distance_label": "Target Distance",
   "edit_goal_heading": "Edit Goal",
-  "save_changes_button": "Save Changes"
+  "save_changes_button": "Save Changes",
+
+  "personal_data": "Personal Data"
 }
