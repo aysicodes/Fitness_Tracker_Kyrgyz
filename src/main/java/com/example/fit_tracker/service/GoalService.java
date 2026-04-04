@@ -16,6 +16,6 @@ public interface GoalService {
 
     String deleteGoal(Long id);
 
-    // <<< НОВЫЙ МЕТОД ДЛЯ АВТОМАТИЗАЦИИ ЦЕЛЕЙ
     void checkGoalsForUser(User user);
+    //Goal Automatization method 
 }
