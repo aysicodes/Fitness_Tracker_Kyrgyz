@@ -11,6 +11,6 @@ public interface ActivityService {
 
     List<ActivityDTO> getActivities();
 
-    ActivityDTO updateActivity(Long id, ActivityDTO dto); // Изменен Object на ActivityDTO
+    ActivityDTO updateActivity(Long id, ActivityDTO dto);
     String deleteActivity(Long id);
 }
