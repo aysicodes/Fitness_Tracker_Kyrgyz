@@ -1,5 +1,5 @@
 # 🏔️ Ala-Too Fit 
-Due to a Git issue during final deployment, my commit history was lost. However, the code is fully functional and the project meets all requirements
+𝑫𝑼𝑬 𝑻𝑶 𝑨 𝑮𝑰𝑻 𝑰𝑺𝑺𝑼𝑬 𝑫𝑼𝑹𝑰𝑵𝑮 𝑭𝑰𝑵𝑨𝑳 𝑫𝑬𝑷𝑳𝑶𝒀𝑴𝑬𝑵𝑻, 𝑴𝒀 𝑪𝑶𝑴𝑴𝑰𝑻 𝑯𝑰𝑺𝑻𝑶𝑹𝒀 𝑾𝑨𝑺 𝑳𝑶𝑺𝑻. 𝑯𝑶𝑾𝑬𝑽𝑬𝑹, 𝑻𝑯𝑬 𝑪𝑶𝑫𝑬 𝑰𝑺 𝑭𝑼𝑳𝑳𝒀 𝑭𝑼𝑵𝑪𝑻𝑰𝑶𝑵𝑨𝑳 𝑨𝑵𝑫 𝑻𝑯𝑬 𝑷𝑹𝑶𝑱𝑬𝑪𝑻 𝑴𝑬𝑬𝑻𝑺 𝑨𝑳𝑳 𝑹𝑬𝑸𝑼𝑰𝑹𝑬𝑴𝑬𝑵𝑻𝑺
 
 [![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://fittrackerkyrgyz.vercel.app)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot)](https://fitness-tracker-kyrgyz.onrender.com)
