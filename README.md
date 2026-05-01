@@ -1,4 +1,5 @@
-# 🏔️ Ala-Too Fit
+# 🏔️ Ala-Too Fit 
+Due to a Git issue during final deployment, my commit history was lost. However, the code is fully functional and the project meets all requirements
 
 [![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://fittrackerkyrgyz.vercel.app)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot)](https://fitness-tracker-kyrgyz.onrender.com)
