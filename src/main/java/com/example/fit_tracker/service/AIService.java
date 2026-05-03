@@ -9,7 +9,8 @@ import java.util.*;
 @Service
 public class AIService {
 
-    private final String apiUrl = "https://router.huggingface.co/v1/chat/completions";
+    @Value("${huggingface.api.url}")
+    private String apiUrl;
     @Value("${huggingface.api.token}")
     private String apiToken;
     private final RestTemplate restTemplate = new RestTemplate();
