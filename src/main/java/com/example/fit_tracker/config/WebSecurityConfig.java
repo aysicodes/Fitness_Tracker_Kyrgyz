@@ -63,12 +63,13 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
+        configuration.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
                 "http://localhost:5174",
                 "http://127.0.0.1:5174",
-                "https://fittrackerkyrgyz.vercel.app"
+                "https://fittrackerkyrgyz.vercel.app",
+                "https://*.vercel.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Accept-Language"));
