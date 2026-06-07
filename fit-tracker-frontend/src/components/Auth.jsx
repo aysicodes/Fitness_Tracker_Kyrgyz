@@ -66,12 +66,14 @@ const Auth = () => {
                             </label>
                             <input
                                 type="text"
+                                name="username"                     
+                                autoComplete="username"              
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
                                 style={global.input}
                                 placeholder={t('placeholder.enter_login')}
-                            />
+                                />
                         </div>
 
                         <div style={{ marginBottom: '30px' }}>
@@ -80,12 +82,14 @@ const Auth = () => {
                             </label>
                             <input
                                 type="password"
+                                name="password"
+                                autoComplete="current-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                                 style={global.input}
                                 placeholder={t('placeholder.enter_password')}
-                            />
+                                />
                         </div>
 
                         {error && <p style={{ color: colors.accent, marginBottom: '15px' }}>{error}</p>}
