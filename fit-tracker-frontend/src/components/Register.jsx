@@ -70,12 +70,14 @@ const Register = () => {
                                 {t('username_label')} *
                             </label>
                             <input
+                                name="username"
+                                autoComplete="off"         
                                 style={{ ...global.input, borderColor: fieldErrors.username ? colors.accent : colors.border }}
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
                                 placeholder={t('placeholder.enter_login')}
-                            />
+                                />
                         </div>
                         <div style={{ marginBottom: '20px' }}>
                             <label style={{ color: colors.textMain, display: 'block', marginBottom: '8px', fontWeight: '600' }}>
@@ -83,12 +85,14 @@ const Register = () => {
                             </label>
                             <input
                                 type="email"
+                                name="email"
+                                autoComplete="off"                   // ← ДОБАВЬТЕ
                                 style={{ ...global.input, borderColor: fieldErrors.email ? colors.accent : colors.border }}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
                                 placeholder={t('placeholder.enter_email')}
-                            />
+                                />
                         </div>
                         <div style={{ marginBottom: '30px' }}>
                             <label style={{ color: colors.textMain, display: 'block', marginBottom: '8px', fontWeight: '600' }}>
@@ -96,12 +100,14 @@ const Register = () => {
                             </label>
                             <input
                                 type="password"
+                                name="password"
+                                autoComplete="new-password"          // ← ДОБАВЬТЕ
                                 style={{ ...global.input, borderColor: fieldErrors.password ? colors.accent : colors.border }}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                                 placeholder={t('placeholder.enter_password')}
-                            />
+                                />
                         </div>
 
                         {generalError && <p style={{ color: colors.accent }}>{generalError}</p>}
