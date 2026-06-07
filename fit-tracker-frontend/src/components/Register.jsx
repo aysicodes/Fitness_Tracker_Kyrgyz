@@ -70,12 +70,13 @@ const Register = () => {
                                 {t('username_label')} *
                             </label>
                             <input
-                                name="username"
-                                autoComplete="off"         
-                                style={{ ...global.input, borderColor: fieldErrors.username ? colors.accent : colors.border }}
+                                type="text"
+                                name="login_username"               // ← новая строка
+                                autoComplete="off"                  // ← новая строка
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
+                                style={global.input}
                                 placeholder={t('placeholder.enter_login')}
                                 />
                         </div>
@@ -86,7 +87,7 @@ const Register = () => {
                             <input
                                 type="email"
                                 name="email"
-                                autoComplete="off"                   // ← ДОБАВЬТЕ
+                                autoComplete="off"                  
                                 style={{ ...global.input, borderColor: fieldErrors.email ? colors.accent : colors.border }}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -101,7 +102,7 @@ const Register = () => {
                             <input
                                 type="password"
                                 name="password"
-                                autoComplete="new-password"          // ← ДОБАВЬТЕ
+                                autoComplete="new-password"         
                                 style={{ ...global.input, borderColor: fieldErrors.password ? colors.accent : colors.border }}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
